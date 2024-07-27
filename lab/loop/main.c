@@ -42,6 +42,7 @@ int main(int argc, char *argv[])
     output.data = (float*)malloc(sizeof(float) * rows * cols);
 
     // Sum all elements of the array
+    //@@ Modify the below code in the remaining demos
     float sum = 0;
 
     for (int i = 0; i < rows * cols; i++)
