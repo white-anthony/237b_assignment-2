@@ -21,6 +21,12 @@ The goal of this portion of the assignment is to provide a baseline, simple impl
 ### Block Matrix Multiply
 The goal of this portion of the assignment is to improve the performance of this by using block matrix multiplication.
 
+## Unrolled Block Matrix Multiply
+The goal of this portion of the assignment is to perform some loop unrolling in preparation for ARM Neon implementation of block matrix multiplication.
+
+## Neon Block Matrix Multiply
+The goal of this portion of the assignment is to using ARM Neon instead of loop unrolling for vectorization.
+
 ## Resources
 
 * [ARM Neon Instruction Reference](https://developer.arm.com/architectures/instruction-sets/intrinsics/#f:@navigationhierarchiessimdisa=%5BNeon%5D&f:@navigationhierarchiesreturnbasetype=%5Bfloat%5D&f:@navigationhierarchieselementbitsize=%5B32%5D)
