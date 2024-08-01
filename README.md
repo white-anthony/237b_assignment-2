@@ -15,7 +15,11 @@ Using the previous code from the loop unrolling section, we should update this t
 
 ## Homework
 
-To be posted by Monday
+### Naive Matrix Multiply
+The goal of this portion of the assignment is to provide a baseline, simple implementation of a matrix multiply.
+
+### Block Matrix Multiply
+The goal of this portion of the assignment is to improve the performance of this by using block matrix multiplication.
 
 ## Resources
 
