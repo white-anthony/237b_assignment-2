@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 
 #include "matrix.h"
 
@@ -10,10 +11,61 @@
         exit(EXIT_FAILURE);                           \
     }
 
+#define EPSILON 1e-4  // Increased tolerance
+
 void NaiveMatrixMultiply(Matrix *input0, Matrix *input1, Matrix *result)
 {
-    //@@ Insert code to implement naive matrix multiply here
+    int rows_a = input0->shape[0];
+    int cols_a = input0->shape[1];
+    int rows_b = input1->shape[0];
+    int cols_b = input1->shape[1];
+
+    if (cols_a != rows_b)
+    {
+        fprintf(stderr, "Matrix multiplication error: columns of A (%d) != rows of B (%d)\n", cols_a, rows_b);
+        exit(EXIT_FAILURE);
+    }
+
+    //printf("Matrix A dimensions: %d x %d\n", rows_a, cols_a);
+    //printf("Matrix B dimensions: %d x %d\n", rows_b, cols_b);
+
+    for (int i = 0; i < rows_a; i++)
+    {
+        for (int j = 0; j < cols_b; j++)
+        {
+            result->data[i * cols_b + j] = 0.0f;
+            for (int k = 0; k < cols_a; k++)
+            {
+                result->data[i * cols_b + j] += input0->data[i * cols_a + k] * input1->data[k * cols_b + j];
+            }
+            
+            //printf("result[%d][%d] = %f\n", i, j, result->data[i * cols_b + j]);
+        }
+    }
 }
+
+// #define EPSILON 1e-4  
+// #define ABSOLUTE_EPSILON 1e-5  
+
+// int CompareMatrices(Matrix *expected, Matrix *result)
+// {
+//     int size = expected->shape[0] * expected->shape[1];
+//     for (int i = 0; i < size; i++)
+//     {
+//         float relative_error = fabs((expected->data[i] - result->data[i]) / expected->data[i]);
+//         float tolerance = EPSILON * fabs(expected->data[i]);
+//         float absolute_error = fabs(expected->data[i] - result->data[i]);
+
+//         if (relative_error > tolerance && absolute_error > ABSOLUTE_EPSILON)
+//         {
+//             fprintf(stderr, "Mismatch at index %d: expected %f, got %f (relative error: %f, absolute error: %f)\n",
+//                     i, expected->data[i], result->data[i], relative_error, absolute_error);
+//             return 0; // Matrices do not match
+//         }
+//     }
+
+//     return 1; // Matrices match
+// }
 
 int main(int argc, char *argv[])
 {
@@ -30,7 +82,7 @@ int main(int argc, char *argv[])
 
     // Host input and output vectors and sizes
     Matrix host_a, host_b, host_c, answer;
-    
+
     cl_int err;
 
     err = LoadMatrix(input_file_a, &host_a);
@@ -43,22 +95,30 @@ int main(int argc, char *argv[])
     CHECK_ERR(err, "LoadMatrix");
 
     int rows, cols;
-    //@@ Update these values for the output rows and cols of the output
-    //@@ Do not use the results from the answer matrix
+    // Set output matrix dimensions
+    rows = host_a.shape[0];
+    cols = host_b.shape[1];
 
     // Allocate the memory for the target.
     host_c.shape[0] = rows;
     host_c.shape[1] = cols;
     host_c.data = (float *)malloc(sizeof(float) * host_c.shape[0] * host_c.shape[1]);
 
-    // Call your matrix multiply.
+    printf("Multiplying matrices...\n");
+    
+
     NaiveMatrixMultiply(&host_a, &host_b, &host_c);
-
-    // // Call to print the matrix
-    // PrintMatrix(&host_c);
-
-    // Check the result of the matrix multiply
     CheckMatrix(&answer, &host_c);
+
+    // // Check the result of the matrix multiply
+    // if (CompareMatrices(&answer, &host_c))
+    // {
+    //     printf("Matrix multiplication result is correct!\n");
+    // }
+    // else
+    // {
+    //     printf("Matrix multiplication result is incorrect.\n");
+    // }
 
     // Save the matrix
     SaveMatrix(input_file_d, &host_c);
